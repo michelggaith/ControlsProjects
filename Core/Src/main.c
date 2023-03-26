@@ -112,15 +112,12 @@ void ADC_Select_CH6(void){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-		//volatile uint32_t ADCValue[];
 	 uint8_t charValue[50];
 	 uint8_t inDig[8];
 	 uint8_t dataRec[8]={};
 	 int flag;
 	 int dato[9]={};
 	 float temperatura;
-
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -152,122 +149,165 @@ int main(void)
 
   while (1)
   {
-
-	  // LECTURA PUERTO SERIE: Los datos estan guardados como ASCII, el programa no avanza hasta que se reciben datos
-
+   // LECTURA PUERTO SERIE: Los datos estan guardados como ASCII, el programa no avanza hasta que se reciben datos
 	  HAL_UART_Receive_IT(&huart2, (uint16_t*)dataRec, sizeof(dataRec));
-
-
-
-	  	dato[0] = (int)(dataRec[0]);
-	  	dato[1] = (int)(dataRec[1]);
-	  	dato[2] = (int)(dataRec[2]);
-	  	dato[3] = (int)(dataRec[3]);
-	  	dato[4] = (int)(dataRec[4]);
-	  	dato[5] = (int)(dataRec[5]);
-	  	dato[6] = (int)(dataRec[6]);
-	  	dato[7] = (int)(dataRec[7]);
-
-	  	//DEFINICION DEL ESTADO DE LAS SALIDAS
-
-	  			if(dato[0]==49){
-	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
-	  	}else{HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);}
-
-	  		  	if(dato[1]==49){
-	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
-	  	}else{HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);}
-
-	  		  	if(dato[2]==49){
-	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
-	  	}else{HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);}
-
-	  		  	if(dato[3]==49){
-	  		  		for(int i=0; i<10; i++){
-	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-	  		HAL_Delay(100);
-	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);}}
-
-	  		  	if(dato[4]==49){
-	  		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-	  	}else{HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);}
-
-	  		  	if(dato[5]==49){
-	  		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
-	  	}else{HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);}
-
-	  		  	if(dato[6]==49){
-	  		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
-	  	}else{HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);}
-
-	  		  	if(dato[7]==49){
-	  		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-	  	}else{HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);}
-
-
-	 	//ETAPA LECTURA DE ENTRADAS DIGITALES//
-	  	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0)){inDig[0] = 1;}
-	  	 else{inDig[0] = 0;}
-
-	  	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1)){inDig[1] = 1;}
-	  	 else{inDig[1] = 0; }
-
-	  	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7)){inDig[2] = 1;}
-	  	 else{inDig[2] = 0;}
-
-	  	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0)){inDig[3] = 1;}
-	  	 else{inDig[3] = 0;}
-
-	  	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)){inDig[4] = 1;}
-	  	 else{inDig[4] = 0;}
-
-	  	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10)){inDig[5] = 1;}
-	  	 else{inDig[5] = 0;}
-
-	  	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11)){inDig[6] = 1;}
-	  	 else{inDig[6] = 0;}
-
-	  	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9)){inDig[7] = 1;}
-	  	 else{inDig[7] = 0;}
-
-	  	//ETAPA MANEJO DE ADC
-
-	  	//CANAL 4
-	  	ADC_Select_CH4();
-	  	HAL_ADC_Start(&hadc1);
-	  	HAL_ADC_PollForConversion(&hadc1, 1000);
-	  	ADCValue[0]= HAL_ADC_GetValue(&hadc1);
-	  	HAL_ADC_Stop(&hadc1);
-	  	//CANAL 5
-	  	ADC_Select_CH5();
-	  	HAL_ADC_Start(&hadc1);
-	  	HAL_ADC_PollForConversion(&hadc1, 1000);
-	  	ADCValue[1]= HAL_ADC_GetValue(&hadc1);
-	  	HAL_ADC_Stop(&hadc1);
-	  	//CANAL 6
-	 	ADC_Select_CH6();
-	  	HAL_ADC_Start(&hadc1);
-	  	HAL_ADC_PollForConversion(&hadc1, 1000);
-	  	ADCValue[2]= HAL_ADC_GetValue(&hadc1);
-	  	HAL_ADC_Stop(&hadc1);
-
-	  	  // ETAPA TRANSMISION VIA UART
-
-	  	temperatura = ADCValue[0]/12.41;
-
-	  /*	if(temperatura>20){
-	  		flag=1;
-	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-	  	} else
-	  	{
-	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-	  	}
-*/
+	  dato[0] = (int)(dataRec[0]);
+	  dato[1] = (int)(dataRec[1]);
+	  dato[2] = (int)(dataRec[2]);
+	  dato[3] = (int)(dataRec[3]);
+	  dato[4] = (int)(dataRec[4]);
+	  dato[5] = (int)(dataRec[5]);
+	  dato[6] = (int)(dataRec[6]);
+	  dato[7] = (int)(dataRec[7]);
+  	//DEFINICION DEL ESTADO DE LAS SALIDAS
+	  if(dato[0]==49)
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
+	  }
+	  if(dato[1]==49)
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
+	  }
+	  if(dato[2]==49)
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
+	  }
+	  if(dato[3]==49)
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+	  }
+	  if(dato[4]==49)
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+	  }
+	  if(dato[5]==49)
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+	  }else
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+	  }
+	  if(dato[6]==49)
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+	  }
+	  if(dato[7]==49)
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+	  }
+ 	//ETAPA LECTURA DE ENTRADAS DIGITALES//
+	  if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
+	  {
+		  inDig[0] = 1;
+	  }
+	  else
+	  {
+		  inDig[0] = 0;
+	  }
+	  if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1))
+	  {
+		  inDig[1] = 1;
+	  }
+	  else
+	  {
+		  inDig[1] = 0;
+	  }
+	  if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7))
+	  {
+		  inDig[2] = 1;
+	  }
+	  else
+	  {
+		  inDig[2] = 0;
+	  }
+	  if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0))
+	  {
+		  inDig[3] = 1;
+	  }
+	  else{inDig[3] = 0;
+	  }
+	  if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1))
+	  {
+		  inDig[4] = 1;
+	  }
+	  else
+	  {
+		  inDig[4] = 0;
+	  }
+	  if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10))
+	  {
+		  inDig[5] = 1;
+	  }
+	  else
+	  {
+		  inDig[5] = 0;
+	  }
+	  if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11))
+	  {
+		  inDig[6] = 1;
+	  }
+	  else
+	  {
+		  inDig[6] = 0;
+	  }
+	  if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9))
+	  {
+		  inDig[7] = 1;
+	  }
+	  else{
+		  inDig[7] = 0;
+	  }
+	  //ETAPA MANEJO DE ADC
+      //CANAL 4
+	  ADC_Select_CH4();
+	  HAL_ADC_Start(&hadc1);
+	  HAL_ADC_PollForConversion(&hadc1, 1000);
+	  ADCValue[0]= HAL_ADC_GetValue(&hadc1);
+	  HAL_ADC_Stop(&hadc1);
+	  //CANAL 5
+	  ADC_Select_CH5();
+	  HAL_ADC_Start(&hadc1);
+	  HAL_ADC_PollForConversion(&hadc1, 1000);
+	  ADCValue[1]= HAL_ADC_GetValue(&hadc1);
+	  HAL_ADC_Stop(&hadc1);
+	  //CANAL 6
+	  ADC_Select_CH6();
+	  HAL_ADC_Start(&hadc1);
+	  HAL_ADC_PollForConversion(&hadc1, 1000);
+	  ADCValue[2]= HAL_ADC_GetValue(&hadc1);
+  	  HAL_ADC_Stop(&hadc1);
+	  // ETAPA TRANSMISION VIA UART
 	  sprintf(charValue, "%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,2\n",ADCValue[0],ADCValue[1],ADCValue[2], inDig[0],inDig[1],inDig[2],inDig[3],inDig[4],inDig[5],inDig[6],inDig[7]);
-
-	      HAL_UART_Transmit(&huart2, (uint8_t*)charValue, strlen(charValue),HAL_MAX_DELAY);
-	      	 HAL_Delay(1000);
-
+      HAL_UART_Transmit(&huart2, (uint8_t*)charValue, strlen(charValue),HAL_MAX_DELAY);
+      HAL_Delay(1000);
   }
     /* USER CODE END WHILE */
 

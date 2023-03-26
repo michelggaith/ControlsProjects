@@ -60,8 +60,8 @@ all: main-build
 main-build: Bluepill1.elf secondary-outputs
 
 # Tool invocations
-Bluepill1.elf Bluepill1.map: $(OBJS) $(USER_OBJS) C:\Users\Usuario\Workspace\Bluepill1\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Bluepill1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Usuario\Workspace\Bluepill1\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Bluepill1.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Bluepill1.elf Bluepill1.map: $(OBJS) $(USER_OBJS) C:\Users\Usuario\Desktop\GIT\STM32\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Bluepill1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Usuario\Desktop\GIT\STM32\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Bluepill1.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
